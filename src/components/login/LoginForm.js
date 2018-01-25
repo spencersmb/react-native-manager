@@ -1,10 +1,15 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Text, View } from 'react-native'
-import { Card, CardSection, Field, Button, Spinner } from '../../common'
+import { Text, View, Animated, Easing } from 'react-native'
+import { Card, CardSection, Field, Button, Spinner, Header } from '../../common'
 import { emailChanged, passwordChanged, loginUser } from '../../Actions'
+import { NavigationActions } from 'react-navigation'
 
 class LoginForm extends Component {
+	state = {
+		scaleAnim: new Animated.Value(1),  // Initial value for opacity: 0
+		opacityAnim: new Animated.Value(1)
+	}
 
 	onEmailChange (text) {
 		this.props.emailChanged(text)
@@ -16,6 +21,14 @@ class LoginForm extends Component {
 
 	submit () {
 		this.props.loginUser(this.props)
+		// this.props.navigation.dispatch({ type: 'Login' })
+	}
+
+	next () {
+		console.log('this.props', this.props)
+
+		this.props.navigation.dispatch({type: 'Home'})
+
 	}
 
 	renderError () {
@@ -32,43 +45,109 @@ class LoginForm extends Component {
 		)
 	}
 
+	componentDidMount () {
+		// Starts the animation
+	}
+
+	aniamteIn () {
+		this.state.scaleAnim.setValue(0.9)
+		this.state.opacityAnim.setValue(0)
+
+		Animated.parallel([
+			Animated.timing(
+				this.state.opacityAnim, {
+					toValue: 1,
+					duration: 400,
+				}
+			),
+			Animated.timing(
+				this.state.scaleAnim,            // The animated value to drive
+				{
+					toValue: 1,
+					easing: Easing.elastic(1), // Springy
+					duration: 600,              // Make it take a while
+				}
+			)
+		]).start()
+	}
+
+	animateOut () {
+		this.state.scaleAnim.setValue(1)
+		this.state.opacityAnim.setValue(1)
+
+		Animated.parallel([
+			Animated.timing(
+				this.state.opacityAnim, {
+					toValue: 0,
+					duration: 400,
+				}
+			),
+			Animated.timing(
+				this.state.scaleAnim,            // The animated value to drive
+				{
+					toValue: 0.9,
+					easing: Easing.elastic(1), // Springy
+					duration: 600,              // Make it take a while
+				}
+			)
+		]).start()
+	}
+
+	shouldComponentUpdate (nextProps, nextState) {
+		nextProps.nav.index === 0 ? this.aniamteIn() : this.animateOut()
+
+		return true
+	}
+
 	render () {
 
 		return (
-			<Card>
-				<CardSection>
-					<Field
-						label='email'
-						placeholder='email@gmail.com'
-						value={this.props.email}
-						onTextChange={this.onEmailChange.bind(this)}/>
-				</CardSection>
-				<CardSection>
-					<Field
-						label='password'
-						placeholder='password'
-						value={this.props.password}
-						type='password'
-						secure={true}
-						onTextChange={this.onPasswordChange.bind(this)}/>
-				</CardSection>
-				<CardSection flexDirection>
-					<View
-						pointerEvents={this.props.loading ? 'none' : 'auto'}
-						style={styles.buttonContainer}>
-						{
-							this.props.loading
-								? this.renderSpinner()
-								: <Button onPress={this.submit.bind(this)}>
-									<Text style={styles.buttonStyles}>Log In</Text>
-								</Button>
-						}
+			<Animated.View style={{
+				...styles.container,
+				opacity: this.state.opacityAnim,
+				transform: [{scale: this.state.scaleAnim}]
+			}}>
+				<Header title='Manager'/>
+				<Card>
+					<CardSection>
+						<Field
+							label='email'
+							placeholder='email@gmail.com'
+							value={this.props.email}
+							onTextChange={this.onEmailChange.bind(this)}/>
+					</CardSection>
+					<CardSection>
+						<Field
+							label='password'
+							placeholder='password'
+							value={this.props.password}
+							type='password'
+							secure={true}
+							onTextChange={this.onPasswordChange.bind(this)}/>
+					</CardSection>
+					<CardSection flexDirection>
+						<View
+							pointerEvents={this.props.loading ? 'none' : 'auto'}
+							style={styles.buttonContainer}>
+							{
+								this.props.loading
+									? this.renderSpinner()
+									: <Button onPress={this.submit.bind(this)}>
+										<Text style={styles.buttonStyles}>Log In</Text>
+									</Button>
+							}
 
-					</View>
-					{this.props.error && this.renderError()}
-				</CardSection>
+						</View>
+						{this.props.error && this.renderError()}
 
-			</Card>
+						<Button onPress={this.next.bind(this)}>
+							<Text style={styles.buttonStyles}>Next</Text>
+						</Button>
+					</CardSection>
+
+				</Card>
+			</Animated.View>
+
 		)
 	}
 }
@@ -91,7 +170,7 @@ const styles = {
 	},
 	buttonContainer: {
 		paddingTop: 15,
-		paddingBottom: 15
+		paddingBottom: 15,
 	},
 	spinnerContainer: {
 		padding: 20
@@ -104,7 +183,8 @@ const mapStateToProps = (state) => {
 		email,
 		password,
 		error,
-		loading
+		loading,
+		nav: state.nav
 	}
 }
 export default connect(mapStateToProps, {emailChanged, passwordChanged, loginUser})(LoginForm)

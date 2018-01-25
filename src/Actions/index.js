@@ -1,4 +1,5 @@
 import firebase from 'firebase'
+import { NavigationActions } from 'react-navigation'
 
 export const emailChanged = (text) => {
 	return {
@@ -30,6 +31,14 @@ export const loginUser = ({email, password}) => (dispatch) => {
 			console.log('request', request)
 
 			loginUserSuccess(dispatch, request)
+			dispatch(NavigationActions.navigate(
+				{
+					routeName: 'Home',
+					// params: {
+					// 	transition: 'myCustomTransition'
+					// }
+				})
+			)
 
 		} catch (e) {
 			console.log('e', e)
@@ -64,4 +73,10 @@ const loginUserFail = (dispatch) => {
 	dispatch({
 		type: 'LOGIN_USER_FAIL'
 	})
+}
+
+export const addEmployee = () => {
+	return {
+		type: 'Create'
+	}
 }

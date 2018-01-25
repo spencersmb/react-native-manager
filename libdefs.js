@@ -12,5 +12,8 @@ declare module 'react-native' {
 	declare export var FlatList: any
 	declare export var TouchableWithoutFeedback: any
 	declare export var LayoutAnimation: any
+	declare export var Easing: any
+	declare export var Animated: any
+	declare export var Button: any
 
 }

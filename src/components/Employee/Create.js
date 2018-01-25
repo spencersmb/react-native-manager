@@ -5,24 +5,21 @@
  */
 
 import React, { Component } from 'react'
-
 import {
 	StyleSheet,
 	View,
+	Text
 } from 'react-native'
-import { Header } from './common'
-import LoginForm from './components/login/LoginForm'
 
-class Main extends Component<{}> {
+class EmployeeCreate extends Component<{}> {
 	static navigationOptions = {
-		title: 'Log In',
+		title: 'Create Employee',
 	}
 
 	render () {
 		return (
 			<View style={styles.container}>
-				<Header title='Manager'/>
-				<LoginForm/>
+				<Text>Create</Text>
 			</View>
 		)
 	}
@@ -31,9 +28,8 @@ class Main extends Component<{}> {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1, // must have flex 1 for scrollable content inside it
-		backgroundColor: '#F5FCFF',
-		elevation: 2
+		backgroundColor: '#F5FCFF'
 	}
 })
 
-export default Main
+export default EmployeeCreate
