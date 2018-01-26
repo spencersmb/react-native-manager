@@ -8,10 +8,11 @@ const Button = (props) => {
 		}
 		props.onPress()
 	}
+
 	return (
 		<TouchableOpacity
 			activeOpacity={0.7}
-			style={styles.buttonStyles}
+			style={{...styles.buttonStyles, backgroundColor: props.color || '#007aff'}}
 			onPress={_onPressButton}>
 			{props.children}
 		</TouchableOpacity>
@@ -29,7 +30,6 @@ const styles = {
 	},
 	buttonStyles: {
 		alignSelf: 'stretch',
-		backgroundColor: '#007aff',
 		borderRadius: 5,
 		marginLeft: 5,
 		marginRight: 5,

@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import { Text, View, Animated, Easing } from 'react-native'
 import { Card, CardSection, Field, Button, Spinner, Header } from '../../common'
 import { emailChanged, passwordChanged, loginUser } from '../../Actions'
-import { NavigationActions } from 'react-navigation'
 
 class LoginForm extends Component {
 	state = {
@@ -21,7 +20,6 @@ class LoginForm extends Component {
 
 	submit () {
 		this.props.loginUser(this.props)
-		// this.props.navigation.dispatch({ type: 'Login' })
 	}
 
 	next () {
@@ -94,8 +92,13 @@ class LoginForm extends Component {
 	}
 
 	shouldComponentUpdate (nextProps, nextState) {
-		nextProps.nav.index === 0 ? this.aniamteIn() : this.animateOut()
 
+		// safety check to not always animate on typing
+		if (this.props.nav.index === nextProps.nav.index) {
+			return true
+		}
+
+		nextProps.nav.index === 0 ? this.aniamteIn() : this.animateOut()
 		return true
 	}
 

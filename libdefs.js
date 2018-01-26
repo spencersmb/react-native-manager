@@ -15,5 +15,8 @@ declare module 'react-native' {
 	declare export var Easing: any
 	declare export var Animated: any
 	declare export var Button: any
+	declare export var Picker: any
+	declare export var Dimensions: any
+	declare export var Modal: any
 
 }

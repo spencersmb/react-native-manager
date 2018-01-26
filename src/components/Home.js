@@ -10,13 +10,19 @@ import {
 	View,
 	Text,
 	Button as RnButton,
+	FlatList,
+	Dimensions
 } from 'react-native'
-import { Button } from '../common'
-import { addEmployee } from '../Actions'
+import { Button, Spinner } from '../common'
+import { addEmployee, fetchEmployees } from '../Actions'
 import { connect } from 'react-redux'
+import EmployeeListItem from './Employee/EmployeeListItem'
+import { NavigationActions } from 'react-navigation'
 
 type Props = {
-	navigation: any
+	navigation: any,
+	fetchEmployees: () => void,
+	employees: {}
 }
 
 const AddButton = connect(null, {addEmployee})((props) => {
@@ -29,48 +35,71 @@ const AddButton = connect(null, {addEmployee})((props) => {
 	)
 })
 
+const SignOut = connect(null)((props) => {
+
+	const onPress = () => {
+		// then navigate back to the employee list
+		const backAction = NavigationActions.back({
+			key: null
+		})
+		props.dispatch(backAction)
+	}
+	return (
+		<RnButton title='Sign Out' onPress={onPress}/>
+	)
+})
+
+const convertObjectToArray = (object) => {
+	const array = []
+	for (let key in object) {
+		if (object.hasOwnProperty(key)) {
+			let item = {...object[key], uid: key}
+			array.push(item)
+		}
+	}
+	// console.log('array', array)
+
+	return array
+}
+
 class Home extends Component<Props> {
 	static navigationOptions = {
-		title: 'Employee List',
-		headerRight: <AddButton/>
+		title: 'Employees',
+		headerRight: <AddButton/>,
+		headerLeft: <SignOut/>,
+		headerBackTitle: 'Back'
 	}
 
-	handleButtonPress () {
-		this.props.navigation.dispatch({type: 'Detail'})
+	componentWillMount () {
+		this.props.fetchEmployees()
 	}
 
-	handleSignOut () {
-		// for current STACK reset works
-		// const resetAction = NavigationActions.reset({
-		// 	index: 0,
-		// 	actions: [
-		// 		NavigationActions.navigate({routeName: 'Login'}),
-		// 	],
-		// })
-		// this.props.navigation.dispatch(resetAction)
+	renderRow (employee) {
+		return <EmployeeListItem employee={employee.item}/>
+	}
 
-		// Navigate back to Parent STACK
-		this.props.navigation.goBack(null)
-
+	renderSpinner () {
+		if (convertObjectToArray(this.props.employees).length < 1) {
+			return (
+				<View style={styles.spinnerContainer}>
+					<Spinner/>
+				</View>
+			)
+		}
 	}
 
 	render () {
-
 		return (
 			<View style={styles.container}>
+				{this.renderSpinner()}
 				{/*<Header title={'Home'}/>*/}
-				<Button onPress={this.handleButtonPress.bind(this)}>
-					<Text>Employee Page</Text>
-				</Button>
-				<Button onPress={this.handleButtonPress.bind(this)}>
-					<Text>Employee Page</Text>
-				</Button>
-				<Button onPress={this.handleButtonPress.bind(this)}>
-					<Text>Employee Page</Text>
-				</Button>
-				<Button onPress={this.handleSignOut.bind(this)}>
-					<Text>Sign Out</Text>
-				</Button>
+				<FlatList
+					data={convertObjectToArray(this.props.employees)}
+					renderItem={this.renderRow.bind(this)}
+					keyExtractor={(employee) => {
+						return employee.name
+					}}
+				/>
 			</View>
 		)
 	}
@@ -80,7 +109,19 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1, // must have flex 1 for scrollable content inside it
 		backgroundColor: '#F5FCFF'
+	},
+	spinnerContainer: {
+		position: 'absolute', top: -50, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center'
 	}
 })
 
-export default connect()(Home)
+const mapStateToProps = (state) => {
+	return {
+		employees: state.employees
+	}
+}
+
+export default connect(mapStateToProps, {fetchEmployees})(Home)
+
+// window example for css
+// transform: [{translateY: (Dimensions.get('window').width / 2) - 25}, {translateX: (Dimensions.get('window').width / 2) - 25}]

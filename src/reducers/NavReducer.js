@@ -30,7 +30,7 @@ export default (state = initialNavState, action) => {
 
 	case 'Detail':
 		nextState = RootNavigator.router.getStateForAction(
-			NavigationActions.navigate({routeName: 'Detail'}),
+			NavigationActions.navigate({routeName: 'Detail', params: action.payload}),
 			state
 		)
 		break
@@ -42,9 +42,18 @@ export default (state = initialNavState, action) => {
 		)
 		break
 
+		// used to navigate Home/Employee List when inside the top index 0 of our nav routes
 	case 'Home':
 		nextState = RootNavigator.router.getStateForAction(
 			NavigationActions.navigate({routeName: 'Home'}),
+			state
+		)
+		break
+
+		// used to navigate when inside index 1 of our nav routes
+	case 'EmployeeList':
+		nextState = RootNavigator.router.getStateForAction(
+			NavigationActions.navigate({routeName: 'EmployeeList'}),
 			state
 		)
 		break
