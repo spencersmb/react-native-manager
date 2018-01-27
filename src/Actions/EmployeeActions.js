@@ -1,5 +1,6 @@
 import firebase from 'firebase'
 import { NavigationActions } from 'react-navigation'
+import { closeModal } from './ModalActions'
 
 export const addEmployee = () => {
 	return {
@@ -105,13 +106,20 @@ export const editEmployee = ({name, phone, shift, uid}) => async (dispatch, getS
 export const deleteEmployee = ({uid}) => async (dispatch, getState) => {
 	const currentState = getState()
 	const user = currentState.auth.user
-	console.log('uid', uid)
 
-	// try {
-	//
-	// } catch (e) {
-	//
-	// }
+	setTimeout(async () => {
+		try {
+
+			await firebase.database().ref(`users/${user.uid}/employees/${uid}`)
+				.remove()
+
+			dispatch(closeModal())
+			goBack(dispatch)
+
+		} catch (e) {
+
+		}
+	}, 1500)
 }
 
 const goBack = (dispatch, key = null) => {

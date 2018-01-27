@@ -123,10 +123,6 @@ class DetailPage extends Component<Props> {
 		this.props.openModal()
 	}
 
-	yourFired () {
-		console.log('your fired')
-	}
-
 	renderButtons () {
 		return (
 			<CardSection>
@@ -152,7 +148,10 @@ class DetailPage extends Component<Props> {
 
 		return (
 			<Card>
-				<ModalConfirm isOpen={this.props.isModalOpen} onAccept={this.yourFired} onDecline={this.props.closeModal}>
+				<ModalConfirm
+					isOpen={this.props.isModalOpen}
+					onAccept={this.deleteEmployee.bind(this)}
+					onDecline={this.props.closeModal}>
 					Are you sure you want to fire this person?
 				</ModalConfirm>
 				<EmployeeForm {...this.props.employee}/>

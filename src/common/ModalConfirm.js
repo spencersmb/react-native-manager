@@ -1,19 +1,8 @@
 import React, { Component } from 'react'
-import { Text, View, Button as RNButton, Modal, SafeAreaView } from 'react-native'
-import { Button, Card, CardSection } from '../common'
+import { Text, View, Button as RNButton, Modal } from 'react-native'
+import { Card, CardSection } from '../common'
 
 class ModalConfirm extends Component {
-	state = {
-		modalVisible: false,
-	}
-
-	openModal () {
-		this.setState({modalVisible: true})
-	}
-
-	closeModal () {
-		this.setState({modalVisible: false})
-	}
 
 	render () {
 		return (
@@ -21,7 +10,7 @@ class ModalConfirm extends Component {
 				transparent
 				visible={this.props.isOpen}
 				animationType={'slide'}
-				onRequestClose={() => this.closeModal()}
+				onRequestClose={() => {}}
 			>
 				<View style={styles.containerStyle}>
 					<Card>
